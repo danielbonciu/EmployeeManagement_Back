@@ -3,7 +3,9 @@ package com.ausy_technologies.demospring.Controller;
 import com.ausy_technologies.demospring.Model.DAO.Role;
 import com.ausy_technologies.demospring.Model.DAO.User;
 import com.ausy_technologies.demospring.Service.UserService;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,7 +52,13 @@ public class UserController {
     @GetMapping("/findRoleBy/{id}")
     public Role findRoleById(@PathVariable int id)
     {
-  return this.userService.findRoleById(id);
+        return this.userService.findRoleById(id);
+    }
+
+    @GetMapping("/findUserBy/{id}")
+    public User findUserById(@PathVariable int id)
+    {
+        return userService.findUserById(id);
     }
 
     @GetMapping("/findAllRoles")
@@ -73,4 +81,15 @@ public class UserController {
 
     }
 
+    @PutMapping("/updateUser/{roleList}/{id}")
+    public User updateUser(@RequestBody User user , @PathVariable List<Role> roleList, @PathVariable int id)
+    {
+        return this.userService.updateUser(user,roleList,id);
+    }
+
+    @PutMapping("/updateRole/{id}")
+    public Role updateRole(@RequestBody Role role, @PathVariable int id)
+    {
+        return this.userService.updateRole(role, id);
+    }
 }

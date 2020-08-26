@@ -23,21 +23,16 @@ public class UserService {
 
 
     public Role saveRole(Role role) {
-
-
         return this.roleRepository.save(role);
     }
 
 
     public User saveUser(User user) {
-
-
         return this.userRepository.save(user);
     }
 
     public User saveUser2(User user ,int idRole)
     {
-
        Role role= this.roleRepository.findById(idRole).get();
 
        List<Role> roleList =new ArrayList<>();
@@ -52,23 +47,23 @@ public class UserService {
        {
            throw new RuntimeException("Role not found");
        }
-
-
     }
-
 
     public User saveUser3(  User user ,List<Role> roleList)
     {
         user.setRoleList(roleList);
         return this.userRepository.save(user);
-
     }
-
-
 
     public Role findRoleById(int id)
     {
         return this.roleRepository.findById(id).get();
+
+    }
+
+    public User findUserById(int id)
+    {
+        return this.userRepository.findById(id);
 
     }
 
@@ -77,19 +72,34 @@ public class UserService {
         return this.roleRepository.findAll();
     }
 
-
     public List<User> findAllUsers()
     {
         return this.userRepository.findAll();
     }
-
 
     public void deleteUserById(int id)
     {
          this.userRepository.deleteById(id);
     }
 
+    public User updateUser(User user ,List<Role> roleList, int id)
+    {
+        User updatedUser = this.userRepository.findById(id);
+        updatedUser.setFirstName(user.getFirstName());
+        updatedUser.setLastName(user.getLastName());
+        updatedUser.setBirthday(user.getBirthday());
+        updatedUser.setEmail(user.getEmail());
+        updatedUser.setUsername(user.getUsername());
+        updatedUser.setRoleList(roleList);
+        return this.userRepository.save(updatedUser);
+    }
 
+    public Role updateRole(Role role, int id)
+    {
+        Role updatedRole = this.roleRepository.findById(id).get();
+        updatedRole.setName(role.getName());
+        return this.roleRepository.save(updatedRole);
+    }
 
 
 }
