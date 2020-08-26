@@ -12,8 +12,10 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
+    // Laurentiu a facut o treaba foarte buna
+
     @Autowired
-    private UserService userService;
+    private UserService userServiceName;
 
 
 
@@ -21,7 +23,7 @@ public class UserController {
     public Role saveRole(@RequestBody Role role) {
 
 
-        Role roleAdded = this.userService.saveRole(role);
+        Role roleAdded = this.userServiceName.saveRole(role);
         return roleAdded;
     }
 
@@ -30,46 +32,46 @@ public class UserController {
 
     @PostMapping("/addUser")
     public User saveUser(@RequestBody User user) {
-        User userAdded = this.userService.saveUser(user);
+        User userAdded = this.userServiceName.saveUser(user);
         return userAdded;
     }
 
     @PostMapping("/addUser2/{idRole}")
     public User saveUser2(@RequestBody User user, @PathVariable int idRole)
     {
-        return this.userService.saveUser2(user,idRole);
+        return this.userServiceName.saveUser2(user,idRole);
 
     }
 
     @PostMapping("/addUser3/{roleList}")
     public User saveUser3(@RequestBody User user , @PathVariable List<Role> roleList)
     {
-        return this.userService.saveUser3(user,roleList);
+        return this.userServiceName.saveUser3(user,roleList);
     }
 
     @GetMapping("/findRoleBy/{id}")
     public Role findRoleById(@PathVariable int id)
     {
-  return this.userService.findRoleById(id);
+  return this.userServiceName.findRoleById(id);
     }
 
     @GetMapping("/findAllRoles")
     public List<Role> findAllRoles()
     {
-        return  userService.findAllRoles();
+        return  userServiceName.findAllRoles();
     }
 
 
     @GetMapping("/allUsers")
     public List<User> findAllUsers()
     {
-        return this.userService.findAllUsers();
+        return this.userServiceName.findAllUsers();
     }
 
     @DeleteMapping("/deleteUserById/{id}")
     public void deleteUser(@PathVariable int id)
     {
-        this.userService.deleteUserById(id);
+        this.userServiceName.deleteUserById(id);
 
     }
 
