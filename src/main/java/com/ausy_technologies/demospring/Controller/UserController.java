@@ -14,6 +14,8 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
+    // Laurentiu a facut o treaba foarte buna
+
     @Autowired
     private UserService userService;
 
@@ -52,6 +54,7 @@ public class UserController {
     @GetMapping("/findRoleBy/{id}")
     public Role findRoleById(@PathVariable int id)
     {
+
         return this.userService.findRoleById(id);
     }
 
