@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -33,17 +30,14 @@ public class UserService {
 
     public User saveUser2(User user ,int idRole)
     {
-       Role role= this.roleRepository.findById(idRole).get();
-
-       List<Role> roleList =new ArrayList<>();
-       roleList.add(role);
-
-       if(role!=null) {
-
-           user.setRoleList(roleList);
-           return this.userRepository.save(user);
-       }
-       else
+        if(this.roleRepository.findById(idRole).isPresent()) {
+            Role role = this.roleRepository.findById(idRole).get();
+            List<Role> roleList =new ArrayList<>();
+            roleList.add(role);
+            user.setRoleList(roleList);
+            return this.userRepository.save(user);
+        }
+        else
        {
            throw new RuntimeException("Role not found");
        }
@@ -79,7 +73,7 @@ public class UserService {
 
     public void deleteUserById(int id)
     {
-         this.userRepository.deleteById(id);
+        this.userRepository.deleteById(id);
     }
 
     public User updateUser(User user ,List<Role> roleList, int id)
@@ -96,9 +90,13 @@ public class UserService {
 
     public Role updateRole(Role role, int id)
     {
-        Role updatedRole = this.roleRepository.findById(id).get();
+        Role updatedRole;
+
+        updatedRole = this.roleRepository.findById(id).get();
         updatedRole.setName(role.getName());
-        return this.roleRepository.save(updatedRole);
+        this.roleRepository.save(updatedRole);
+
+        return updatedRole;
     }
 
 
