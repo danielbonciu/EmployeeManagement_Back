@@ -2,6 +2,7 @@ package com.ausy_technologies.demospring.Controller;
 
 import com.ausy_technologies.demospring.Model.DAO.Role;
 import com.ausy_technologies.demospring.Model.DAO.User;
+import com.ausy_technologies.demospring.Model.DTO.UserDto;
 import com.ausy_technologies.demospring.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -131,5 +132,25 @@ public class UserController {
         Role updatedRole = userService.updateRole(role, id);;
 
         return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body(updatedRole);
+    }
+
+    @GetMapping("/getUserDto/{id}")
+    public ResponseEntity<UserDto> getUserDto(@PathVariable int id)
+    {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Responded", "FindUserDto");
+
+        UserDto userDto = this.userService.findUserDtoById(id);
+        return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body( userDto );
+    }
+
+    @GetMapping("/getAllUserDto")
+    public ResponseEntity<List<UserDto>> getAllUserDto()
+    {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Responded", "FindAllUserDto");
+
+        List<UserDto> userDtoList = this.userService.findAllUsersDto();
+        return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body( userDtoList );
     }
 }
