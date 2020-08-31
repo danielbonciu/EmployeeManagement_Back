@@ -2,6 +2,7 @@ package com.ausy_technologies.demospring.Service;
 
 import com.ausy_technologies.demospring.Model.DAO.Role;
 import com.ausy_technologies.demospring.Model.DAO.User;
+import com.ausy_technologies.demospring.Model.DTO.UserDto;
 import com.ausy_technologies.demospring.Repository.RoleRepository;
 import com.ausy_technologies.demospring.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -99,5 +101,34 @@ public class UserService {
         return updatedRole;
     }
 
+    private UserDto UserMapping(User user){
+        if(user != null){
+            UserDto userDto = new UserDto();
+            userDto.setId(user.getId());
+            userDto.setUsername(user.getUsername());
+            userDto.setEmail(user.getEmail());
+            List<String> roleList;
+            roleList = user.getRoleList().stream().map(r -> r.getName()).collect(Collectors.toList());
+            userDto.setRoleList(roleList);
+            return userDto;
+        }
+        return null;
+    }
+
+    public UserDto findUserDtoById(int id){
+        return UserMapping(this.userRepository.findById(id));
+    }
+
+    public List<UserDto> findAllUsersDto(){
+        List<UserDto> userDtoList = new ArrayList<>();
+
+        List<User> userList = this.userRepository.findAll();
+
+        for(User temp : userList){
+            userDtoList.add(UserMapping(temp));
+        }
+
+        return userDtoList;
+    }
 
 }
