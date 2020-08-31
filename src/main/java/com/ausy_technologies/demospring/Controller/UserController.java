@@ -1,5 +1,6 @@
 package com.ausy_technologies.demospring.Controller;
 
+import com.ausy_technologies.demospring.Error.ErrorResponse;
 import com.ausy_technologies.demospring.Model.DAO.Role;
 import com.ausy_technologies.demospring.Model.DAO.User;
 import com.ausy_technologies.demospring.Model.DTO.UserDto;
@@ -27,7 +28,12 @@ public class UserController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Responded", "SaveRole");
 
-        this.userService.saveRole(role);
+        try {
+            this.userService.saveRole(role);
+        }catch(ErrorResponse er){
+            ErrorResponse.LogError(er);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(httpHeaders).body( null );
+        }
         return ResponseEntity.status(HttpStatus.ACCEPTED).headers(httpHeaders).body( role );
     }
 
@@ -43,10 +49,16 @@ public class UserController {
     @PostMapping("/addUser2/{idRole}")
     public ResponseEntity<User> saveUser2(@RequestBody User user, @PathVariable int idRole)
     {
+        User newUser = new User();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Responded", "SaveUser2");
 
-        this.userService.saveUser2(user, idRole);
+        try{
+            newUser = userService.saveUser2(user, idRole);
+        }catch(ErrorResponse er){
+            ErrorResponse.LogError(er);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(httpHeaders).body( null );
+        }
         return ResponseEntity.status(HttpStatus.ACCEPTED).headers(httpHeaders).body( user );
     }
 
@@ -63,20 +75,31 @@ public class UserController {
     @GetMapping("/findRoleBy/{id}")
     public ResponseEntity<Role> findRoleById(@PathVariable int id)
     {
+        Role role;
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Responded", "FindRoleByID");
-
-        Role role = this.userService.findRoleById(id);
+        try {
+            role = this.userService.findRoleById(id);
+        }catch(ErrorResponse er){
+            ErrorResponse.LogError(er);
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).headers(httpHeaders).body(null);
+        }
         return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body( role );
     }
 
     @GetMapping("/findUserBy/{id}")
     public ResponseEntity<User> findUserById(@PathVariable int id)
     {
+        User user;
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Responded", "FindUserByID");
 
-        User user = this.userService.findUserById(id);
+        try {
+            user = this.userService.findUserById(id);
+        }catch(ErrorResponse er){
+            ErrorResponse.LogError(er);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(httpHeaders).body( null );
+        }
         return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body( user );
     }
 
@@ -137,11 +160,16 @@ public class UserController {
     @GetMapping("/getUserDto/{id}")
     public ResponseEntity<UserDto> getUserDto(@PathVariable int id)
     {
+        UserDto userDto = new UserDto();
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Responded", "FindUserDto");
-
-        UserDto userDto = this.userService.findUserDtoById(id);
-        return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body( userDto );
+        try {
+            userDto = this.userService.findUserDtoById(id);
+        }catch(ErrorResponse er){
+            ErrorResponse.LogError(er);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(httpHeaders).body(null);
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body(userDto);
     }
 
     @GetMapping("/getAllUserDto")
@@ -149,8 +177,12 @@ public class UserController {
     {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Responded", "FindAllUserDto");
-
-        List<UserDto> userDtoList = this.userService.findAllUsersDto();
-        return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body( userDtoList );
+        try {
+            List<UserDto> userDtoList = this.userService.findAllUsersDto();
+            return ResponseEntity.status(HttpStatus.FOUND).headers(httpHeaders).body(userDtoList);
+        }catch (ErrorResponse er){
+            ErrorResponse.LogError(er);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(httpHeaders).body(null);
+        }
     }
 }

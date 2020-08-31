@@ -1,5 +1,6 @@
 package com.ausy_technologies.demospring.Service;
 
+import com.ausy_technologies.demospring.Error.ErrorResponse;
 import com.ausy_technologies.demospring.Model.DAO.Role;
 import com.ausy_technologies.demospring.Model.DAO.User;
 import com.ausy_technologies.demospring.Model.DTO.UserDto;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,7 +24,11 @@ public class UserService {
 
 
     public Role saveRole(Role role) {
-        return this.roleRepository.save(role);
+        if(role.getName() == null){
+            throw new ErrorResponse("Invalid Role body format", 400);
+        }else {
+            return this.roleRepository.save(role);
+        }
     }
 
 
@@ -32,17 +38,17 @@ public class UserService {
 
     public User saveUser2(User user ,int idRole)
     {
-        if(this.roleRepository.findById(idRole).isPresent()) {
+        if(this.roleRepository.findById(idRole).isPresent() == false) {
+            throw new ErrorResponse("Role with id " +idRole+ " not found", 404);
+        }
+        else
+        {
             Role role = this.roleRepository.findById(idRole).get();
             List<Role> roleList =new ArrayList<>();
             roleList.add(role);
             user.setRoleList(roleList);
             return this.userRepository.save(user);
         }
-        else
-       {
-           throw new RuntimeException("Role not found");
-       }
     }
 
     public User saveUser3(  User user ,List<Role> roleList)
@@ -53,14 +59,20 @@ public class UserService {
 
     public Role findRoleById(int id)
     {
-        return this.roleRepository.findById(id).get();
-
+        Role role = this.roleRepository.findById(id).get();
+        if(role == null){
+            throw new ErrorResponse("Role "+ id +" not found!", 404);
+        }
+        return role;
     }
 
     public User findUserById(int id)
     {
-        return this.userRepository.findById(id);
-
+        User user = this.userRepository.findById(id);
+        if(user == null){
+            throw new ErrorResponse("User "+ id +" not found!", 404);
+        }
+        return user;
     }
 
     public List<Role> findAllRoles()
@@ -102,33 +114,37 @@ public class UserService {
     }
 
     private UserDto UserMapping(User user){
-        if(user != null){
-            UserDto userDto = new UserDto();
-            userDto.setId(user.getId());
-            userDto.setUsername(user.getUsername());
-            userDto.setEmail(user.getEmail());
-            List<String> roleList;
-            roleList = user.getRoleList().stream().map(r -> r.getName()).collect(Collectors.toList());
-            userDto.setRoleList(roleList);
-            return userDto;
-        }
-        return null;
+        UserDto userDto = new UserDto();
+        userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
+        List<String> roleList;
+        roleList = user.getRoleList().stream().map(r -> r.getName()).collect(Collectors.toList());
+        userDto.setRoleList(roleList);
+        return userDto;
     }
 
     public UserDto findUserDtoById(int id){
-        return UserMapping(this.userRepository.findById(id));
+        User user = this.userRepository.findById(id);
+        if(user == null)
+        {
+            throw new ErrorResponse("User "+id+" not found.",404);
+        }else {
+            return UserMapping(user);
+        }
     }
 
     public List<UserDto> findAllUsersDto(){
         List<UserDto> userDtoList = new ArrayList<>();
 
         List<User> userList = this.userRepository.findAll();
-
-        for(User temp : userList){
-            userDtoList.add(UserMapping(temp));
+        if(userList.isEmpty())
+        {
+            throw new ErrorResponse("Nici User in baza de date", 404);
+        }else {
+            for (User temp : userList) {
+                userDtoList.add(UserMapping(temp));
+            }
+            return userDtoList;
         }
-
-        return userDtoList;
     }
-
 }
